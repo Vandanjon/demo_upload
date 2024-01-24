@@ -1,40 +1,36 @@
-import Counter from "./components/Counter";
-import logo from "./assets/logo.svg";
-
+import { useRef, useState } from "react";
+import axios from "axios";
 import "./App.css";
 
 function App() {
+  const inputRef = useRef();
+  const [msg, setMsg] = useState("Aucun upload effectué");
+
+  const hSubmit = (evt) => {
+    evt.preventDefault();
+
+    const formData = new FormData();
+    formData.append("avatar", inputRef.current.files[0]);
+
+    axios
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/upload/avatar`, formData)
+      .then(() => {
+        setMsg("Upload réussi !");
+      })
+      .catch(() => {
+        setMsg("Upload échoué !");
+      });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React !</p>
+      <h1>TOTO LE HARICOT</h1>
 
-        <Counter />
-
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {" | "}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+      <form onSubmit={hSubmit}>
+        <input type="file" ref={inputRef} />
+        <button type="submit">Envoyer!</button>
+      </form>
+      <p>{msg}</p>
     </div>
   );
 }
